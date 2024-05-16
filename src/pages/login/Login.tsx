@@ -1,46 +1,24 @@
-import { useEffect, useState } from "react";
-import { getRandomHexColor } from "../../utils";
-import { useTabContext } from "../../context/tab/TabContext";
-import { DashboardPage } from "../dashboard/Dashboard";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useClientContext } from "../../context/client/ClientContext";
 
-export type LoginPageProps = {
-  tabId: string;
-  state: {
-    username: string;
-    password: string;
-  };
-  setState: (tabId: string, state: any) => void;
-};
+export function LoginPage() {
+  const [data, setData] = useState({ username: "milannantav", password: "Vizirofs@nd" });
+  const [loading, setLoading] = useState(false);
+  const { login } = useClientContext();
+  const navigate = useNavigate();
 
-export function LoginPage({ tabId, state, setState }: LoginPageProps) {
-  const { username, password } = state;
-
-  useEffect(() => {
-    (async () => {
-      console.log("login page mounted");
-      // @ts-expect-error api is defined in preload
-      const a = await window.api.test("oi");
-      console.log(a);
-    })();
-  }, []);
-
-  const { changeCurrentPage } = useTabContext();
-
-  const login = async () => {
+  const handleSubmit = async () => {
+    const { username, password } = data;
     console.log("login", username, password);
-    // @ts-expect-error api is defined in preload
-    const a = await window.api.LHCLogin({ username, password });
-    // changeCurrentPage(tabId, DashboardPage, { name: "Dashboard Page" });
+    setLoading(true);
+    await login({ username, password });
+    setLoading(false);
+    navigate("/dashboard");
   };
 
-  const [bgColor] = useState(getRandomHexColor());
   return (
-    <div
-      className={`flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-[${bgColor}]`}
-      style={{
-        background: bgColor,
-      }}
-    >
+    <div className={`flex min-h-full flex-col justify-center px-6 py-12 lg:px-8`}>
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         {/* <img
           className="mx-auto h-10 w-auto"
@@ -69,9 +47,9 @@ export function LoginPage({ tabId, state, setState }: LoginPageProps) {
                 name="username"
                 className="grow"
                 placeholder="Username"
-                value={username}
+                value={data.username}
                 onChange={(e) => {
-                  setState(tabId, { ...state, username: e.target.value });
+                  setData({ ...data, username: e.target.value });
                 }}
               />
             </label>
@@ -96,16 +74,16 @@ export function LoginPage({ tabId, state, setState }: LoginPageProps) {
                 type="password"
                 className="grow"
                 placeholder="Password"
-                value={password}
+                value={data.password}
                 onChange={(e) => {
-                  setState(tabId, { ...state, password: e.target.value });
+                  setData({ ...data, password: e.target.value });
                 }}
               />
             </label>
           </div>
 
           <div>
-            <button type="button" className="btn btn-primary w-full" onClick={login}>
+            <button type="button" disabled={loading} className="btn btn-primary w-full" onClick={handleSubmit}>
               Sign in
             </button>
           </div>

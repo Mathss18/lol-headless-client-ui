@@ -1,7 +1,7 @@
-import { app, BrowserWindow } from "electron"; // electron
+import { app, BrowserWindow, ipcMain } from "electron"; // electron
 import isDev from "electron-is-dev"; // To check if electron is in development mode
 import path from "path";
-
+import { HeadlessClient, Region } from "lol-headless-client";
 
 let mainWindow;
 
@@ -60,5 +60,52 @@ process.on("uncaughtException", (error) => {
   }
 });
 
+// ============= HEADLESS CLIENT COMMUNICATION =============
 
-import "../src/communication/index.js";
+const hc = new HeadlessClient({ region: Region.BR });
+
+const callback = ({ eventName, data }) => {
+  mainWindow.webContents.send("lol-headless-client-listen-events", { eventName, data });
+};
+hc.listen(callback);
+
+ipcMain.handle("lol-headless-client-login", async (event, args) => {
+  const { username, password } = args;
+  try {
+    await hc.login({ username, password });
+  } catch (error) {
+    console.dir(error);
+    console.dir(error?.response);
+    console.dir(error?.response?.data);
+    console.dir(error?.response?.data?.payload);
+    console.dir(error?.error);
+    console.dir(error?.data);
+    console.dir(error.data?.payload);
+  }
+});
+
+ipcMain.handle("lol-headless-client-send-message", async (event, args) => {
+  const { message, jid } = args;
+  try {
+    await hc.sendMessage({ message, jid });
+  } catch (error) {
+    console.dir(error);
+  }
+});
+
+ipcMain.on("lol-headless-client-listen-events", (event, data) => {
+  console.log("Received data from React:", data);
+});
+
+ipcMain.handle("lol-headless-client-get-friendlist", (event, args) => {
+  return hc.getFriendList();
+});
+
+ipcMain.handle("lol-headless-client-set-info", async (event, args) => {
+  const { status, message } = args;
+  return await hc.setInfo({ status, message });
+});
+
+setInterval(() => {
+  const data = { message: "Hello from Electron" };
+}, 5000); // Sending data every 5 seconds for demonstration purposes
