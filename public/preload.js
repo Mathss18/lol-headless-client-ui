@@ -11,5 +11,8 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.on("test-receive", (event, data) => {
       callback(data);
     }),
-  lolHeadlessClientLogin: (args) => ipcRenderer.invoke("lol-headless-client-login", args),
+
+  LHCLogin: (args) => ipcRenderer.invoke("lol-headless-client-login", args),
+  LHCSendMessage: (args) =>
+    ipcRenderer.invoke("lol-headless-client-send-message", args),
 });

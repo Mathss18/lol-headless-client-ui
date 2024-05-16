@@ -29,7 +29,7 @@ export function LoginPage({ tabId, state, setState }: LoginPageProps) {
   const login = async () => {
     console.log("login", username, password);
     // @ts-expect-error api is defined in preload
-    const a = await window.api.lolHeadlessClientLogin({ username, password });
+    const a = await window.api.LHCLogin({ username, password });
     // changeCurrentPage(tabId, DashboardPage, { name: "Dashboard Page" });
   };
 

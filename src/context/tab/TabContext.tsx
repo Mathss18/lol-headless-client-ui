@@ -34,7 +34,7 @@ function TabContextProvider({ children }: { children: React.ReactNode }) {
   const [tabs, setTabs] = useState<Tab[]>([]);
 
   const addNewTab = () => {
-    const state = { username: "Xandainan", password: "3pointsraven" };
+    const state = { username: "milannantav", password: "Vizirofs@nd" }; // boej
     const tabId = uuid();
     setTabs((tabs) => [
       ...tabs,
