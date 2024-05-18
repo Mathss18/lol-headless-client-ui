@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useClientContext } from "../../context/client/ClientContext";
 
 export function LoginPage() {
-  const [data, setData] = useState({ username: "milannantav", password: "Vizirofs@nd" });
+  const [data, setData] = useState({ username: "Whilinora", password: "mobil28!" });
   const [loading, setLoading] = useState(false);
   const { login } = useClientContext();
   const navigate = useNavigate();
