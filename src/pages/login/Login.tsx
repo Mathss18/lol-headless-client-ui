@@ -10,7 +10,6 @@ export function LoginPage() {
 
   const handleSubmit = async () => {
     const { username, password } = data;
-    console.log("login", username, password);
     setLoading(true);
     await login({ username, password });
     setLoading(false);

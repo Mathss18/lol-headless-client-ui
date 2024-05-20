@@ -39,8 +39,8 @@ function ChatContextProvider({ children }: { children: React.ReactNode }) {
   }, [currentChat]);
 
   const handleLHCEvents = ({ eventName, data }: any) => {
-    console.log("EVENT RECEIVED FROM CHAT CONTEXT");
-    console.log({ eventName, data });
+    // console.log("EVENT RECEIVED FROM CHAT CONTEXT");
+    // console.log({ eventName, data });
 
     if (eventName === "XMPP_FRIENDLIST_UPDATED") {
       setFriends(data);
@@ -69,10 +69,6 @@ function ChatContextProvider({ children }: { children: React.ReactNode }) {
     }
     if (eventName === "XMPP_CHAT_HISTORY_UPDATED") {
       setCurrentChat((prevCurrentChat) => {
-        console.log({
-          friendJid: data.friendJid,
-          prev: prevCurrentChat.friendJid,
-        });
         if (data.friendJid === prevCurrentChat.friendJid) {
           return { ...prevCurrentChat, messages: data.chatHistory };
         }
@@ -111,7 +107,6 @@ function ChatContextProvider({ children }: { children: React.ReactNode }) {
 
   const getChatHistory = async (data: { jid: string }) => {
     const { jid } = data;
-    console.log({ jid });
     setCurrentChat({ friendJid: jid, messages: [] });
     await window.api.LHCGetChatHistory({ jid });
   };
@@ -125,10 +120,6 @@ function ChatContextProvider({ children }: { children: React.ReactNode }) {
     setCurrentChat({ friendJid: jid, messages: [] });
     getChatHistory({ jid });
   };
-
-  useEffect(() => {
-    console.log({ currentChat });
-  }, [currentChat]);
 
   return (
     <ChatContext.Provider

@@ -9,9 +9,7 @@ export const ClientContext = createContext<{
 function ClientContextProvider({ children }: { children: React.ReactNode }) {
   const isListening = useRef(false);
 
-  const handleLHCEvents = ({}: any) => {
-    console.log("EVENT RECEIVED FROM CLIENT CONTEXT");
-  };
+  const handleLHCEvents = ({}: any) => {};
 
   useEffect(() => {
     if (isListening.current) return;
