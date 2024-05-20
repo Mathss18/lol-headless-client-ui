@@ -1,27 +1,19 @@
-import { CallbackEvent } from "lol-headless-client";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 export const ClientContext = createContext<{
-  friends: any[];
   login: (data: { username: string; password: string }) => void;
-  sendMessage: (data: { message: string; jid: string }) => void;
 }>({
-  friends: [],
   login: async () => {},
-  sendMessage: async () => {},
 });
-
-const handleLHCEvents = ({ eventName, data }: CallbackEvent) => {
-  console.log({ eventName, data });
-};
 
 function ClientContextProvider({ children }: { children: React.ReactNode }) {
   const isListening = useRef(false);
-  const [friends, setFriends] = useState<any[]>([]);
+
+  const handleLHCEvents = ({}: any) => {};
 
   useEffect(() => {
     if (isListening.current) return;
-    window.api.LHCListen((data: CallbackEvent) => handleLHCEvents(data));
+    window.api.LHCListen((data: any) => handleLHCEvents(data));
     isListening.current = true;
   }, [isListening]);
 
@@ -31,8 +23,7 @@ function ClientContextProvider({ children }: { children: React.ReactNode }) {
         const { username, password } = data;
         await window.api.LHCLogin({ username, password });
         await window.api.LHCSetInfo({ status: "chat" });
-        const friendList = await window.api.LHCGetFriendList();
-        setFriends(friendList);
+        getFriendList();
         resolve();
       } catch (error) {
         reject(error);
@@ -40,17 +31,14 @@ function ClientContextProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const sendMessage = async (data: { message: string; jid: string }) => {
-    const { message, jid } = data;
-    await window.api.LHCSendMessage({ message, jid });
+  const getFriendList = async () => {
+    await window.api.LHCGetFriendList();
   };
 
   return (
     <ClientContext.Provider
       value={{
-        friends,
         login,
-        sendMessage,
       }}
     >
       {children}

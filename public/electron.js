@@ -10,7 +10,9 @@ const createWindow = () => {
     width: 600,
     height: 600,
     webPreferences: {
-      preload: isDev ? path.join(app.getAppPath(), "/preload.js") : path.join(app.getAppPath(), "./dist/preload.js"),
+      preload: isDev
+        ? path.join(app.getAppPath(), "/preload.js")
+        : path.join(app.getAppPath(), "./dist/preload.js"),
       worldSafeExecuteJavaScript: true,
       contextIsolation: true,
     },
@@ -65,7 +67,10 @@ process.on("uncaughtException", (error) => {
 const hc = new HeadlessClient({ region: Region.BR });
 
 const callback = ({ eventName, data }) => {
-  mainWindow.webContents.send("lol-headless-client-listen-events", { eventName, data });
+  mainWindow.webContents.send("lol-headless-client-listen-events", {
+    eventName,
+    data,
+  });
 };
 hc.listen(callback);
 
@@ -98,14 +103,15 @@ ipcMain.on("lol-headless-client-listen-events", (event, data) => {
 });
 
 ipcMain.handle("lol-headless-client-get-friendlist", (event, args) => {
-  return hc.getFriendList();
+  hc.getFriendList();
 });
 
 ipcMain.handle("lol-headless-client-set-info", async (event, args) => {
   const { status, message } = args;
-  return await hc.setInfo({ status, message });
+  await hc.setInfo({ status, message });
 });
 
-setInterval(() => {
-  const data = { message: "Hello from Electron" };
-}, 5000); // Sending data every 5 seconds for demonstration purposes
+ipcMain.handle("lol-headless-client-get-chat-history", async (event, args) => {
+  const { jid } = args;
+  await hc.getChatHistory({ jid });
+});

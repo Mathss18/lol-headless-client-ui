@@ -6,4 +6,5 @@ contextBridge.exposeInMainWorld("api", {
   LHCSendMessage: (args) => ipcRenderer.invoke("lol-headless-client-send-message", args),
   LHCSetInfo: (args) => ipcRenderer.invoke("lol-headless-client-set-info", args),
   LHCGetFriendList: (args) => ipcRenderer.invoke("lol-headless-client-get-friendlist", args),
+  LHCGetChatHistory: (args) => ipcRenderer.invoke("lol-headless-client-get-chat-history", args),
 });
